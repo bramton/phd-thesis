@@ -1,0 +1,72 @@
+\section{Discussion}\label{sec:stoa:discussion}
+In this section we summarise our findings and highlight potential challenges and research directions. 
+
+\subsection{Pre-processing techniques}
+Most of the pre-processing techniques are aimed at reducing the volume of data. This reduction is required because current models cannot handle large volumes of data due to memory requirements or lack of computational resources. Most post-processing techniques are based on heuristic methods, where parameters such as partition sizes and down-sampling ratios are empirically defined.
+A possible approach to address this issue is to explore new and innovative models which can handle large volumes of data by themselves. These models could learn to focus on the relevant parts of the input, and might be able to learn sparse structures which fit the underlying data. These approaches could be encoded as a dedicated head of a machine learning model which can be easily added to existing models.
+An alternative would be to use the raw frame-by-frame data which avoids the issue of partitioning the data into tractable pieces altogether.
+Furthermore, the format which point cloud data is stored can be enhanced. One such enhancement is to explore formats where the level of detail can be automatically encoded. This would aid the construction of models which work from coarse detection towards fine detection. For instance, detecting locations of catenary arches would require a low level of detail, whereas locating the exact location of insulators within the scene would require a high level of detail.
+
+\subsection{Modelling techniques}
+Machine learning-based methods have gained significant importance in railway point classification as shown in Table~\ref{tab:stoa:modelling}, with seven publications using it for point cloud classification or segmentation. Though the models involved usually require large training datasets of point cloud data to be able to learn patterns, features and relationships, the efforts are worthwhile in terms of performance and allow for transferability to other problems (model reuse or transfer learning). Convolutional and graph neural nets dominate the machine learning models used in the various problems related to railway point clouds, such as object detection or rail track detection. Machine learning approaches are also powerful in the sense of their generalisability to different railway environments and condition on top of the availability of pre-trained models ready for reuse under minor fine-tuning. The drawback of such approaches remains their limited explainability, especially for transformer-based and recurrent models.
+
+The runner-up technique is model fitting, which involves fitting geometric models to the point cloud data, enabling the identification of rail tracks, switches, poles, or other relevant structures. Such techniques have been used in four of the surveyed works. The technique is powerful in the sense that it allows to explicitly model and detect specific railway objects and structures, as well as its robustness against outliers. Its main drawback remains however the labour-intensive effort to initialise and set the parameters for the models with due care to the calibration to optimise the results. Such calibrations efforts should of course factor in the various railway environments and conditions.
+
+\begin{table}[ht!]
+    \centering
+    \begin{tabular}{ll}\toprule
+    \textbf{Modelling Technique} & \textbf{References}\\ \midrule
+         \kern-1em \textit{Structure based-methods}\\
+         Edge Based Methods &   \cite{ariyachandra2020detection} \\
+         Region Growing methods & \cite{cserep2022effective,arastounia2017enhanced,chbeir2015detection} \\
+         Model Fitting Methods & \cite{arastounia2016application,ariyachandra2020digital,benhmida2011from,cserep2022effective} \\
+         Graph Based Methods  &  - \\
+         Hybrid Methods & \cite{arastounia2016application,ariyachandra2020detection,ariyachandra2020digital,chbeir2015detection,Karunathilake20} \\
+         \addlinespace
+         \kern-1em \textit{Machine learning-based methods}\\
+         Traditional Machine Learning & 
+         \cite{sturari2017robotic,uggla2021towards}\\     
+         Deep Learning Based Methods: Indirect method & \cite{corongiu2020classification,lin2020lidar,manier2022railway,yu2022real-time} \\ 
+         Deep Learning Based Methods: Direct method & \cite{chen2020deep,dibari2021semantic,grandio2022point} \\
+         Deep Learning Based Methods: Hybrid method & \cite{liu2021an} \\
+         \addlinespace
+         \kern-1em \textit{Other techniques}\\
+         Semantic and Ontology based  & \cite{karmacharya2015knowledge}\\
+         RANSAC based Methods &  \cite{oudeelberink2013rail,pastucha2016catenary} \\
+         DBSCAN & \cite{lu2021bolt}\\ \bottomrule         
+    \end{tabular}
+    \caption{A summary of modelling techniques with related references}
+    \label{tab:stoa:modelling}
+\end{table}
+
+\subsection{Research roadmap}\label{subsec:stoa:roadmap}
+We have condensed the information and insights from this literature review into a research roadmap. This roadmap indicates several pointers for future research. First the need for a benchmark dataset is put forward, together with the requirements of such a dataset. After this we focus on the advancements within the area of machine learning which are needed to efficiently and effectively deal with large volumes of point cloud data. Lastly we provide indicators within the area of usability, such as visualisation and interoperability.
+
+\subsubsection{Benchmark dataset}
+We like to emphasise the need for an open benchmark dataset to rank various techniques proposed in literature. The number of publications in the context of point cloud, machine learning and railway infrastructure is increasing. However, one cannot objectively compare these techniques due to a lack of a common benchmark dataset. We again emphasise developing a benchmark dataset set comparable to the KITTI dataset~\cite{kitti} available for self-driving cars. The dataset published by Ton~\cite{ton2022labelled} is a positive step in this direction. We propose the creation of a public benchmark dataset as a joint collaborative effort between academics and industry. Goal will be to create dataset with a large variety of railway scenes. Within a single country the railway components can vary significantly in appearance. Ideally the dataset should have a large inter-country and intra-country variation. The dataset should also support multiple machine learning tasks such as segmentation and object detection. Regarding object detecting, the dataset should also encode the directionallity of the object. Furthermore a hierarchical labelling scheme is recommended, the dataset should facilitate detecting larger scale object such as catenary arches, but also individual components such as insulators. From previous experience it was noted that each labelled object should also have a unique identifier, this aids the automated iteration of objects.
+
+\subsubsection{Machine learning advancements}
+A focus area of active research could be the creation of lightweight machine learning models which are able to consume raw point clouds directly. Current machine learning models are not capable of this yet.
+ 
+\paragraph{Weakly supervised learning}
+Machine learning-based techniques and st\-ruc\-ture-ba\-sed methods have shown promising performance. However, the cost of data labelling hampers large-scale application of machine learning-based techniques. Data annotation is a tedious, time-consuming, and error-prone task. Applying various machine learning techniques that work with partially labelled data is advisable. Our research group has had some success in this direction (see~\cite{dekker2023semi}), hindered mainly by the data labelling process. We have worked with an active learning approach; the results will be published elsewhere. We emphasise that the scale of our experiments are limited, and there is a need for larger-scale experimentation to quantify the strength and feasibility of applying machine learning techniques for partially labelled data.
+
+Another promising direction is self supervised learning (see e.g. \cite{NEURIPS2019_993edc98}). Often, there are large volumes of unlabelled data available and very few labelled examples. Goal would be to leverage this huge volume of unlabelled data to encode some `common sense` into a model. Knowledge of this model can then be transferred when training a new model based on labelled data. This technique has been applied to point clouds for other domains but to the best of our knowledge has not been applied to railway datasets yet. 
+
+\paragraph{Multi-modal and ensemble machine learning}
+The railway environment can be captured using different data modalities that can be combined for an optimal performance. Fusion of image data with point clouds have shown promising results (see e.g. \cite{wang2022farnet,wolf2021asset,mathani2022enhancing}). Different data modalities can be combined systematically to develop a multimodal-model. However, this approach has its own challenges~\cite{baltruvsaitis2018multimodal}. This approach is already used for point cloud data (see~\cite{zhang2022mm}) however it is not applied in the context of railway environment. 
+Another challenge in railway data is relative sizes of objects that hampers development of a single model that captures all variation. These could also be handled by multimodal-model approach where variation is used as a modality for modelling. 
+Another way to handle variation is develop separate models based on object sizes and ensemble them. 
+
+\paragraph{Hybrid approach}
+Structural methods exploit topological structure, and the railway environment has fixed topology to some extent. A combination of machine learning and a structural approach could lead to promising results in the context of railway infrastructure. Based on our experiments with various structural and machine learning-based methods, for objects with defined shapes like track lines and catenary cables, structural approaches could be more fruitful for complex objects such as an insulator or signals machine learning-based approaches could be promising. Thus, a combination of both has the potential to optimise accuracy for segmentation and object detection tasks.
+
+\paragraph{Explainable AI}
+The other aspect is the application of explainability. Current machine learning models for point clouds are mostly black boxes. In our literature search we cannot find a reference where explainablity is applied to point cloud data irrespective of application domain. Since the point cloud data is distinct in its working, there is a need to develop explainable AI techniques tailored towards point cloud data. As a first step one can evaluate the applicability of the so-called model agnostic approaches (see e.g. \cite{samek2023xai}) for point cloud datasets.
+
+\subsubsection{Usability}
+The final research direction is the usability of the results obtained from the data. Questions arise, such as: How to visualise and interact with the results, how to ensure interoperability of the results?
+
+The world around us is three-dimensional, but still the most common way to visualise data captured from this three-dimensional world is on a two-dimensional screen. Recent technological advancements within the area of head-mounted displays (HMD) have enabled very interesting opportunities to visualise and interact with 3D data (see e.g. \cite{garrido2021point}). This technology can also be used to interactively label the data and to visualise the results from the machine learning models.
+
+As the information which is extracted from point cloud data will likely be used in a larger context, the interoperability of this information is vital. Without proper interoperability, there is a risk of isolated digital environments being formed~\cite{rojas21}. To overcome this risk, techniques such as linked data~\cite{bizer2009linked} can be explored. These techniques can leverage information derived from point clouds into broader contexts, such as asset monitoring~\cite{tutcher14}.

@@ -1,0 +1,16 @@
+\chapter{Semantic segmentation}\label{chap:semseg}
+\epigraph{Labels are the opium of the machine learning researcher.}{prof. Jitendra Malik\\\textit{UC Berkeley}}
+\blfootnote{This chapter has been previously published as:\\ \fullcite{ton2022semantic}}
+
+The previous chapter looked into detecting railway assets from point cloud data at a large scale using object detection models. Object detections are specified by a bounding box. To further scrutinise the objects within these bounding boxes and increase the level of detail of the digitisation process, semantic segmentation can be used. Semantic segmentation assigns a class to each point within the point cloud. This decomposition can then for instance be used to retrieve \textsc{cad} models from a \textsc{cad} library to create an accurate digital representation. Results from this chapter are used to answer RQ2. Furthermore, this chapter aided in defining the gap identification contribution.
+
+This chapter presents the semantic segmentation of railway catenary arches of the Dutch railway system. It explores three deep learning-based models for semantic segmentation of point clouds in a practical real-world setting: \pnpp{}, Super Point Graph, and Point Transformer. As there are no public datasets available for this task, a custom dataset has been collected and annotated. The dataset contains 14 individually labelled classes and is the first of its kind to be made publicly available. This dataset is one of the contributions of this thesis.
+
+
+A modified \pnpp{} model achieved the best mean class Intersection over Union~(IoU) of 71\% for the semantic segmentation task on this new, diverse, and challenging dataset.
+
+\clearpage
+\input{./Chapters/semseg/main.tex}
+
+\clearpage
+\printbibliography[heading=subbibnumbered]

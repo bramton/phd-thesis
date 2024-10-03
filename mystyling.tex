@@ -1,0 +1,119 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%% Miscalenous bits and pieces %%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\nouppercaseheads
+\setsecnumdepth{subsection}
+\nobibintoc
+\setlength{\epigraphwidth}{0.6\textwidth}
+ 
+% For a large list of chapter styles see the memoir manual.
+\chapterstyle{ell}
+
+% Reduce the space between top of page and chapter title
+\setlength{\beforechapskip}{0pt}
+
+% On a 'Chapter' page, put the page number on the right hand side.
+\makeoddfoot{plain}{}{}{\thepage}
+
+% Required when using the ctabular (continuous tabular) environment. 
+\newfixedcaption{\freetabcaption}{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%% Add thumbs with the chapter number on the edges of the pages %%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newlength\thumbwidth
+\setlength\thumbwidth{36pt}
+\newlength\thumbheight
+\setlength\thumbheight{24pt}
+\newlength\thumbvspace
+\setlength\thumbvspace{40pt}
+\newlength\thumbradius
+\setlength\thumbradius{4pt}
+
+% Default style is called headings
+% We need to add (\trimedge,\trimtop), because `current page' does not account for trims.
+%     see: https://tex.stackexchange.com/questions/44416/is-memoirs-page-layout-incompatible-with-tikz
+\makepagestyle{mainmatterstyle}
+% The style for the recto (right) page
+\makeoddhead{mainmatterstyle}{%
+}%
+{%
+\begin{tikzpicture}[remember picture,overlay]
+  \coordinate (top left) at ($(current page.north east) +(\trimedge,\trimtop) - (\thumbwidth,\uppermargin) - \value{chapter}*(0,\thumbheight+\thumbvspace) + (0,\thumbheight+\thumbvspace)$);
+  \coordinate (bot right) at ($(top left) + (\thumbwidth+\thumbradius+\trimedge,0) - (0,\thumbheight)$);
+  \fill[fill=sax-lgrey, rounded corners=\thumbradius] (top left) rectangle (bot right);
+  \node at ($(bot right) + (0,0.5\thumbheight) - (0.5\thumbwidth+\thumbradius+\trimedge,0)$){\bfseries\color{white}\thechapter};
+  %\node[circle,draw,fill=red] (c) at (0,0) {};
+\end{tikzpicture}
+}%
+{%
+\leftmark%
+\makebox[0pt][l]{%
+	\hspace{\marginparsep}
+	{\color{sax-green}\rule{1pt}{1em}} % TODO: should rule be dropped a bit??
+	\enskip\thepage	
+}%
+}%
+
+% The style for the verso (left) page
+\makeevenhead{mainmatterstyle}{%
+\makebox[0pt][r]{%
+	\thepage\enskip%
+	{\color{sax-green}\rule{1pt}{1em}}
+	\hspace{\marginparsep}
+}%
+\rightmark%
+}%
+{%
+\begin{tikzpicture}[remember picture,overlay]
+  \coordinate (top right) at ($(current page.north west) +(\trimedge,\trimtop) + (\thumbwidth,-\uppermargin) - \value{chapter}*(0,\thumbheight+\thumbvspace) + (0,\thumbheight+\thumbvspace)$);
+  \coordinate (bot left) at ($(top right) - (\thumbwidth+\thumbradius+\trimedge,0) - (0,\thumbheight)$);
+  \fill[fill=sax-lgrey, rounded corners=\thumbradius] (top right) rectangle (bot left);
+  \node at ($(bot left) + (0,0.5\thumbheight) + (0.5\thumbwidth+\thumbradius+\trimedge,0)$){\bfseries\color{white}\fontsize{0.75\thumbheight}{0.75\thumbheight}\thechapter};
+\end{tikzpicture}
+}%
+{}%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%% Define a 'blind' footnote, that is, without mark %%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Source: https://tex.stackexchange.com/questions/30720/footnote-without-a-marker
+\newcommand\blfootnote[1]{%
+  \begingroup
+  %\setlength{\skip\footins}{0pt} % Does not work
+  \renewcommand\thefootnote{}\footnote{#1}%
+  \addtocounter{footnote}{-1}%
+  \endgroup
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%% Change colour of the epigraph rule %%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Source: https://tex.stackexchange.com/questions/251148/how-to-change-the-color-of-the-memoir-epigraph-rule
+\newcommand{\epigraphrulecolor}{sax-green}
+\makeatletter
+\addtodef\@epirule{\color{\epigraphrulecolor}}{}
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%% Change colour of chapter heading lines. %%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% WARNING: this also changes the colour of the rules in tables
+% Copied from memoir.cls
+\makeatletter
+\renewcommand\chs@ell@helper[1]{%
+  \par%
+    \begin{adjustwidth}{}{-\chapindent}
+      \arrayrulecolor{sax-green}% Custom addition
+      \begin{tabularx}{\linewidth}{>{\raggedleft\arraybackslash}X|}%|emacs
+        \leavevmode\chapnumfont #1\vphantom{1}%
+        \hspace*{3.6pt}%
+        \rule[-13.5pt]{0pt}{14.8mm}%
+        \\%
+        \hline%
+      \end{tabularx}%
+    \end{adjustwidth}%
+    \par%
+  }%
+\makeatother

@@ -1,0 +1,103 @@
+\section{Pre-processing}\label{sec:stoa:preprocessing}
+Point clouds are unordered sets of points. Absence of structure makes them a challenging datatype to deal with. Pre-processing techniques help to reduce the volume of data, introduce a structure or filter out the dispensable points. In certain cases the boundary between pre-processing and modelling is blurred due to the fact that the result of pre-processing is sometimes already a feature. Therefore, we do not apply the term in their strict sense instead focus on the mechanisms of the techniques. 
+
+In general, the main goal of the pre-processing is to cull points such that further processing steps require less computational effort. In the following subsections we list the pre-processing techniques found in literature and their associated references.
+
+\subsection{Cropping}
+Cropping is a very rudimentary pre-processing step that removes points based on a specified bounding region. This is predicated on the assumption that the points outside this region do not contain information of interest. For instance, the work of \citeauthor{ariyachandra2020digital}, which focuses on detecting elements of the overhead line equipment, remove all points belonging to the ground by setting a threshold value of 0.23~cm. Points with a $z$-coordinate below this threshold are removed~\cite{ariyachandra2020digital}. Similarly \citeauthor{chen2020deep} also use fixed thresholds to remove distant points with no information~\cite{chen2020deep}. A more advanced method of detecting ground points is proposed by \citeauthor{chen2021railway} which use a Euclidean distance clustering segmentation algorithm~\cite{chen2021railway}. When point clouds are collected using a mobile scanner mounted on a train, the trajectory log can play an important role in the culling of points. As an example, Pastucha defines an extent of 5~m on both sides of the trajectory. Points outside of this region are removed. The scan angle, which is usually recorded as meta-data of a point, can also be used as a filter condition to remove points~\cite{gazero2019automated}. As an example of how the scan angle can be used to crop relevant regions of points, the authors show how the track centre lines and the ballast top can easily be recognised from the point cloud data.
+To remove vegetation, the work of \citeauthor{cserep2022effective} first project the scene to 2D by registering the maximum value of the \(z\)-coordinate. After this contour detection is used to filter out vegetation~\cite{cserep2022effective}, unfortunately no further details are provided for this approach.
+
+Which points to cull is also highly dependent on the application. If the application is to detect tracks, it makes sense to only maintain points which relate to the tracks. Specifically for this purpose, \citeauthor{ponciano2015detection} use a mask-based approach to only keep points which relate to the tracks~\cite{ponciano2015detection}. An alternative approach provided by \citeauthor{zou2019efficient} first filter the point cloud based on intensity values, only values with a low intensity are kept. After filtering, tracks remain, but still there is significant noise. Further refinement steps are required to extract the tracks~\cite{zou2019efficient}.
+
+\subsection{Partitioning}
+Commonly the point cloud data provided covers a large area. In order to create tractable pieces that can be used in downstream processing steps the larger point cloud is usually partitioned into smaller pieces. \citeauthor{ariyachandra2020digital} manually partitioned a large point cloud that covered \(\approx\)18~km into three pieces covering \(\approx\)6~km each~\cite{ariyachandra2020digital}. In a related work, the same authors employed an optimisation strategy to determine the optimal number of partitions for splitting the dataset~\cite{ariyachandra2020detection}. Constraints used in this optimisation approach were the curvature of the track, number of noise points, and the cropping of masts. The width of the scenes was limited to 30~m.
+
+The work of \citeauthor{lamas2021automatic} use the trajectory log of the measurement train to partition the data into pieces which are 100~m long and 20~m wide~\cite{lamas2021automatic}. Pastucha uses even smaller sections which are 0.5~m in length~\cite{pastucha2016catenary}. Surprisingly, only a limited number of studies utilise the raw frame-by-frame data from scanner, with most relying solely on aggregated results. An exception is the work of \citeauthor{chen2020deep} that use 2D laser scan lines to segment the overhead contact system~\cite{chen2020deep}. This raw frame data is commonly used for applications such as autonomous driving. The envisioned benefit of using this raw data is that the data will have a fixed frame of reference, i.e. it is always known how the data is captured with reference to the current track.
+
+\subsection{Normalisation}
+Normalisation of the training data plays an important role, especially when deep learning methods are involved. To align individual pieces of point cloud data along the $x$-axis \citeauthor{ariyachandra2020detection} use a Principle Component Analysis (PCA) to determine the major axis of the point cloud~\cite{ariyachandra2020detection}. The work of \citeauthor{lamas2021automatic} also use PCA, albeit in a slightly modified form, to align the direction of the tracks along the $x$-axis. \citeauthor{corongiu2020classification} align the point cloud subsets to the $y$-axis, unfortunately the method to do so is not described~\cite{corongiu2020classification}. The trajectory log of the mobile sensing platform facilitates a convenient way of aligning sub-point cloud to the track~\cite{pastucha2016catenary}. Of course, the aforementioned partitioning of the scene into regular-sized pieces is also a form of normalisation.
+
+\subsection{Projection}
+As point cloud data has no structure, sometimes the point cloud is projected to a 2D plane with a grid to create an image. This image can then be processed with conventional image processing techniques. For example, \citeauthor{corongiu2020classification} flatten the point cloud to a 2D grid by summing in the $z$-direction. Within this image masts will be visible as high-intensity blobs, making it easy to locate them~\cite{corongiu2020classification}.
+\par An interesting piece of work, albeit in a very premature state, is presented by \citeauthor{wolf2021asset} Their approach to detect railway assets from point cloud data is to first render a greyscale image from a slice of point cloud data~\cite{wolf2021asset}. The pixel values are the intensity values from the original point cloud data. These slices are taken perpendicular to the rail track. The work shows results of both object detection, based on the YOLOv3 model~\cite{yolov3}, and on semantic segmentation, based on U-Net~\cite{unet}. An image-based approach has two major benefits: the field of image processing has advanced much further than point-based methods and the processing of raster data can be done much more efficiently compared to point data.
+
+\subsection{Data structures}
+Voxelisation is the process of defining a regular 3D grid, each element of the grid is referred to as a voxel. This is analogous to a pixel in the 2D case. The benefit of the voxelisation process is that it creates a structured format which can be processed very efficiently. For example, \citeauthor{jung2016multi-range} extract line segments per voxel~\cite{jung2016multi-range}. Another data structure which occurs is the \textit{kd}-tree, this data structure is used for efficiently selecting neighbour points around a query point~\cite{arastounia2015automated}.
+
+When point clouds are captured using a laser scanner, the captured point density close to the sensor is higher compared to regions further away from the sensor. To homogenise the density across the entire scene, a fixed number of points per voxel can be retained~\cite{lamas2021automatic,grandio2022point}. Not only does this improve the homogeneity of the point distribution, but it also reduces the number of points.
+
+
+Besides voxelisation, different grid definition schemes are possible. For instance, \citeauthor{yu2022real-time} use pyramid partitions~\cite{yu2022real-time}. This approach defines smaller volumes close to the sensor and increases the volume gradually when the distance to the sensor increases. This ensures that the number of points per volume remains roughly the same.
+
+\subsection{Sampling}
+Down-sampling is a common pre-processing step to reduce the number of points or to achieve a fixed number of points~\cite{cui2020real-time, grandio2022point}. Fixed number of points are usually required when training deep learning models. For instance, \citeauthor{grandio2022point} used a fixed size of 16384 (\(2^{14}\)) and 32768 (\(2^{15}\)) points for training a \pnpp{} segmentation model~\cite{grandio2022point}. Note that it is a common misconception that such models \textit{require} a fixed number of points as input. The architecture of these models are agnostic of the point set size, but the frameworks used to implement the models are the bottleneck.
+
+To create tractable pieces which can be used during training of a deep learning model, \citeauthor{grandio2022point} extract cubes with a fixed edge length of 10~$m$ from larger scene~\cite{grandio2022point}. The work of \citeauthor{corongiu2020classification} extract a cylindrical region (radius=$2~m$) of interest around candidate points. These cylindrical regions are then further processed to create a semantic segmentation~\cite{corongiu2020classification} of the scene.
+
+Using information from the scanning geometry and the time-stamp metadata of each point it is possible to extract consecutive cross sections of the railway bed area~\cite{yang2014automated}. These so-called scan lines are then further processed to extract the track locations.
+
+\subsection{Feature extraction}
+Point clouds offer a rich source of data from which a plethora of features can be derived. Geometrically, one can extract attributes such as normal vectors and curvature. From a statistical perspective, features like local density and variance are valuable. In terms of shape, roughness and linearity provide insights into the structure of the data. Topologically, connectivity sheds light on the relationships between data points. Additionally, when colour information is available, RGB values can be harnessed. These extracted features, encompassing geometric, statistical, shape, topological, and colour attributes, serve as foundational elements for subsequent modelling endeavours.
+
+\citeauthor{geng2020comparison} provide a comparison of several feature extraction methods applied to a point cloud scene of a Chinese high-speed railway collected using an airborne laser scanner~\cite{geng2020comparison}. The work of \citeauthor{jung2016multi-range} extract line segments per voxel~\cite{jung2016multi-range}. These line segments are then classified using a multi-range Conditional Random Field (CRF) classifier.
+
+\subsection{Others}
+The majority of the works use laser scanning techniques to capture a point cloud. An alternative approach is to use photogrammetry techniques to create a point cloud based on image data. This is done in the work of \citeauthor{sahebdivani2020rail} which use a commercial drone to capture images from the area of interest. These images are then processed to create a point cloud~\cite{sahebdivani2020rail}. The use of structured light is another approach to create point clouds, this is done by \citeauthor{cui2020real-time} in their work to automatically inspect railway fasteners~\cite{cui2020real-time}. 
+
+One pre-processing step which is often lacking from literature is the processing of the raw point cloud data. Often laser scanners will produce a stream of frames. These frames are then combined to create a larger point cloud scene. During this processing step, the points are also mapped from their sensor's local reference frame to a global coordinate reference system. To do so, an accurate Global Navigation Satellite System (GNSS) is required. The reception and accuracy of GNSS is not always consistent, therefore GNSS data is often augmented with gyroscope, heading and odometer data. The work of \citeauthor{xu2021vehicle-born} sheds some light on this matter~\cite{xu2021vehicle-born}. During the processing of raw frames into larger scenes, also duplicate measurements are excluded. For instance, when the measurement train is standing still, data is still being collected. This will contain a lot of redundant data, which is removed during post-processing.
+
+\subsection{Summary of pre-processing techniques}
+The pre-processing techniques described above are tied closely to the purpose and each of them has its advantages and challenges. The choice of the techniques is mostly dependent on the context and the data. In Table~\ref{tab:stoa:pre-processing}, we provide a concise summary and comparison of these techniques. We have also included their use in the context of railway infrastructure as a result of our literature study. From the table, it is evident that these pre-processing techniques are not mutually exclusive. Instead, several techniques are often employed to maximise their collective benefit. 
+
+\begin{table}[!ht]
+\centering
+\begin{tabular}{%
+l%
+>{\raggedright\arraybackslash}p{3cm}%
+>{\raggedright\arraybackslash}p{3cm}%
+>{\raggedright\arraybackslash}p{2cm}}\toprule
+\textbf{Technique} & \textbf{Challenges} & \textbf{Advantages} & \textbf{References}\\
+\midrule
+Cropping &
+\textbullet\,Determining optimal boundaries.
+\textbullet\,Potential loss of important data.& 
+\textbullet\,Reduces data size for faster processing. 
+\textbullet\,Focuses on regions of interest. & \cite{ariyachandra2020digital,chen2020deep,gazero2019automated,ponciano2015detection,zou2019efficient}\\
+\addlinespace
+Partitioning & 
+\textbullet\,Deciding optimal partition size. 
+\textbullet\,Handling boundary data between partitions. & 
+\textbullet\,Manages large datasets by breaking them into manageable chunks. & \cite{ariyachandra2020digital,ariyachandra2020detection,lamas2021automatic,chen2020deep}\\
+\addlinespace
+Normalisation & 
+\textbullet\,Determining appropriate scale. 
+\textbullet\,Potential loss of original data characteristics. & 
+\textbullet\,Standardises data range. 
+\textbullet\,Enhances compatibility with algorithms requiring normalised data. &\cite{ariyachandra2020detection,corongiu2020classification,pastucha2016catenary} \\
+\addlinespace
+Projection & 
+\textbullet\,Loss of 3D information. 
+\textbullet\,Deciding optimal projection plane. & 
+\textbullet\,Converts 3D data to 2D for easier visualisation and processing. & \cite{corongiu2020classification,wolf2021asset}\\
+\addlinespace
+Data Structures & 
+\textbullet\,Complexity in implementation. 
+\textbullet\,Overhead in memory and computation. & 
+\textbullet\,Efficient data access and manipulation. 
+\textbullet\,Supports advanced algorithms and operations. & \cite{jung2016multi-range,arastounia2015automated,lamas2021automatic,grandio2022point,yu2022real-time}\\
+\addlinespace
+Sampling & 
+\textbullet\,Potential loss of detail. 
+\textbullet\,Choosing appropriate sampling method and density. & 
+\textbullet\,Reduces data size.
+\textbullet\,Speeds up processing. & \cite{cui2020real-time,grandio2022point,grandio2022point,corongiu2020classification,yang2014automated}\\
+\addlinespace
+Feature Extraction & 
+\textbullet\,Deciding relevant features. 
+\textbullet\,Complexity in feature computation. & 
+\textbullet\,Reduces data dimensionality. 
+\textbullet\,Enhances data characteristics for specific tasks. & \cite{geng2020comparison,jung2016multi-range} \\
+\bottomrule
+\end{tabular}
+\caption{Comparison of pre-processing techniques for point clouds and their use in the context of railway infrastructure.}\label{tab:stoa:pre-processing}
+\end{table}

@@ -1,0 +1,333 @@
+\section{Modelling techniques} \label{sec:stoa:modelling}
+In this section, we compile a glossary of methods, algorithms, and techniques for modelling point clouds, designed for purposes like object classification, segmentation, and object detection. We categorise and describe these methods found in the literature, focusing on their strengths and limitations. The point cloud modelling methods are broadly divided into two categories: structure-based methods and machine learning-based methods. We describe each of these and their sub-categorisation. 
+Two aspects are linked to modelling. One is the performance metric, while the other is the type of railway infrastructure being modelled. We start this section by providing information on these two essential aspects. 
+
+%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Rail infrastructure}
+An essential aspect to consider in the railway environment is the modelling goal concerning railway infrastructure. While several researchers have focused on specific components of the infrastructure, the complete railway infrastructure is often overlooked.  In Table~\ref{tab:stoa:rail_infra} we have summarised the most commonly studied infrastructure components along with the corresponding research references.
+\par It is important to acknowledge that certain aspects of the railway infrastructure, such as foreign objects, bridges, and tunnel deformation, have not been included in this paper due to the set exclusion criteria. Nevertheless, these areas have been gaining interest, particularly in the context of predictive maintenance and the expansion of high-speed rail networks in China (e.g., \cite{chen2021railway}). As the railway industry continues to evolve, exploring these aspects becomes increasingly crucial for comprehensive railway infrastructure modelling and analysis.
+\begin{table}[!ht]
+    \centering
+    \begin{tabular}{ll}\toprule
+       \textbf{Rail Component}  & \textbf{Reference}\\\midrule
+        Rail Track detection and classification & \cite{arastounia2016application,cui2020real-time}\\
+        Cable detection and classification & \cite{arastounia2016application,ariyachandra2020digital,corongiu2020classification,gutirrezfernndez2020automatic}\\
+        Switch and crossing detection & \cite{chbeir2015detection,benhmida2011from,hmida2012knowledge-driven,ponciano2015detection}\\\bottomrule
+    \end{tabular}
+    \caption{Break down of the literature based on railway component.} \label{tab:stoa:rail_infra}   
+\end{table}
+
+\subsection{Performance metrics}
+To evaluate the performance of modelling techniques various metrics can be used. In the following, We define the most popular metrics used in the context of point clouds. 
+\subsubsection{Accuracy, Precision, Recall, $F_1$-score}
+These are commonly used metrics for evaluating classification accuracy. For the sake of completeness they are defined below:
+\begin{itemize}
+\item \textbf{Accuracy} measures the overall correctness of a model's predictions by calculating the ratio of correctly predicted instances to the total number of instances (Equation~\ref{eq:stoa:acc}). It provides a general assessment of how well the model performs across all classes. The formula for accuracy is:
+\begin{equation}
+    Accuracy = \frac{TP+TN}{TP+TN+FP+FN}
+    \label{eq:stoa:acc}
+\end{equation}
+where $TP$ stands for true positive, $TN$ is the true negative, $FP$ is false positive, and $FN$ is the false negative. 
+\item \textbf{Precision} focuses on the proportion of correctly predicted positive instances out of all instances predicted as positive (Equation~\ref{eq:stoa:prec}). It provides insight into the model's ability to avoid false positives (instances predicted as positive but are actually negative). The formula for precision is:
+\begin{equation}
+    Precision = \frac{TP}{TP + FP}
+    \label{eq:stoa:prec}
+\end{equation}
+\item
+\textbf{Recall}, also known as sensitivity or true positive rate, measures the proportion of correctly predicted positive instances out of all actual positive instances (Equation~\ref{eq:stoa:rec}). It indicates the model's ability to identify all positive instances and avoid false negatives (instances predicted as negative but are actually positive). The formula for recall is:
+\begin{equation}
+    Recall = \frac{TP}{TP + FN}
+    \label{eq:stoa:rec}
+\end{equation}
+\item
+The $\mathbf{F_1}$\textbf{-score} is a harmonic mean of precision and recall (Equation~\ref{eq:stoa:f1}). It provides a balanced measure that takes into account both precision and recall. The $F_1$-score is useful when one want to consider both false positives and false negatives equally. The formula for the $F_1$-score is:
+\begin{equation}
+    F_1\text{-}score = 2\frac{ Precision \cdot Recall}{Precision + Recall}
+    \label{eq:stoa:f1}
+\end{equation}
+In the case of Boolean data, the $F_1$ score is also sometimes referred to as the S\o rensen-Dice coefficient.
+\end{itemize}
+
+
+\subsubsection{Root Mean Square Error (RMSE)}
+It is the standard deviation of prediction error (Equation~\ref{eq:stoa:rmse}). It is often used for regression problems. The formula to compute RMSE is:
+\begin{equation}
+    \mathit{RMSE}=\sqrt{\frac{\sum_{i=1}^N(Actual_i-Predicted_i)^2}{N}}
+    \label{eq:stoa:rmse}
+\end{equation}
+
+\subsubsection{Mean Intersection over Union}
+Mean Intersection over Union (mean IoU) is a metric commonly used in evaluating the performance of semantic segmentation models. It measures the overlap between the predicted segmentation and the ground truth segmentation.
+
+The Intersection over Union (IoU), also known as Jaccard Index, for a single class is calculated by dividing the size of the intersection of pixels between the predicted and ground truth masks by the size of the union of those pixels (Equation~\ref{eq:stoa:iou}). It provides a measure of how well the model accurately captures the boundaries and regions of the objects of interest.
+
+The mean IoU is then computed by averaging the IoU values across all classes or categories. It provides an overall assessment of the segmentation model's performance, taking into account the accuracy of segmenting multiple classes simultaneously.
+
+The formula for calculating IoU is:
+\begin{equation}
+    IoU = \frac{|\text{$Predicted$ $mask$ $\cap$ $ground$ $truth$ $mask$}|}{|\text{$Predicted$ $mask$ $\cup$ $ground$ $truth$ $mask$}|}
+    \label{eq:stoa:iou}
+\end{equation}
+
+Where $\cap$ is the intersection, $\cup$ is the union and $|\,\cdot\,|$ is the cardinality.
+The mean IoU is computed by taking the average IoU across all classes or categories (Equation~\ref{eq:stoa:miou}). Here, $N$ is the total number of classes:
+\begin{equation}
+    \text{Mean IoU} = \frac{1}{N}\sum_{i=1}^N \text{IoU class } i
+    \label{eq:stoa:miou}
+\end{equation}
+
+Mean IoU values range from 0 to 1, with 1 indicating a perfect overlap between the predicted and ground truth masks, and 0 indicating no overlap at all. Higher mean IoU values indicate better segmentation performance.
+
+\subsection{Structure-based methods}\label{subsec:stoa:structure based methods}
+Structure-based methods exploit or enforce structure to the point cloud scenes. These methods utilise the geometric and topological properties of point clouds and often rely on mathematical models to extract meaningful information from the point cloud data. 
+
+These methods leverage geometric and topological properties, enabling them to represent the underlying 3D structure and surfaces accurately. Moreover, these methods are frequently characterised by well-defined mathematical models. These models not only enhance our understanding of the underlying processes but also ensure precision during implementation.
+
+Besides their advantages the structure-based methods have limitations too. The methods could struggle to model surfaces that are complex since the underlying principles rely on basic geometric primitives. Additionally, they can handle noise to a certain level but remain sensitive to a high noise level and outliers that can impact their performance and limit their usability. Moreover, structure-based methods could be computationally intense and they do not profit from higher point densities. Their lack of adaptability is another drawback, as they are often tailored to specific application domains and may not generalise well to diverse datasets.  
+
+These methods can be further categorised (see e.g.~\cite{grilli_review_2017,nguyen_3d_2013}). The following subsections describe these sub-categories and their use in the context of the railway environment. 
+
+\subsubsection{Edge-based methods}
+Edge-based methods usually have two main stages: (i) detecting edges to outline borders of different regions followed by (ii) the grouping of points inside boundaries to generate the final segments. Edges are defined by points where changes in the local surface properties exceed a given threshold. Local surface properties are for instance normals, gradients, principal curvatures or higher-order derivatives. Edge-based methods are generally fast but may produce inaccurate results in case of noise and uneven density of point clouds. When disconnected edges are detected, a filling or interpretation procedure is applied to identify closed segments.
+\citeauthor{ariyachandra2020detection} \cite{ariyachandra2020detection} used this method to detect pole-like objects. Their approach was based on line detection and point clustering. 
+
+\subsubsection{Region-growing methods}
+Region-growing methods start from one or more seed points that possess specific characteristics and then expand to neighbouring points with similar characteristics. These characteristics are for example surface orientation, curvature, etc. Bottom-up approaches start from some seed points and grow the segments on the basis of given similarity criteria. Bottom-up region-growing algorithms include two steps: identification of the seed points and adding points to them based on predefined criteria. Top-down approaches start by assigning all points to one segment and then subdivide the segment into smaller ones guided by certain thresholds. Region-growing methods are robust to noise (see e.g. \cite{lu2021supervoxel}), but they are sensitive to (i) the location of initial seed regions and (ii) inaccurate estimations of the normals and curvatures of points near region boundaries. For an explicit description of the region-growing algorithm in the context of railways, the interested reader is referred to~\citeauthor{cserep2022effective} \cite[Algorithm~1 and Algorithm~2]{cserep2022effective}.
+Other examples of region-growing algorithms can be found in the work of \citeauthor{arastounia2017enhanced} \cite{arastounia2017enhanced}, \citeauthor{chbeir2015detection} \cite{chbeir2015detection}, 
+\citeauthor{zhang2016automatic} \cite{zhang2016automatic}, \citeauthor{lu2021bolt} \cite{lu2021bolt}, and \citeauthor{zou2019efficient} \cite{zou2019efficient}. 
+
+\subsubsection{Model fitting methods}
+Model fitting methods are based on the observation that a lot of objects are built-up out of geometric primitives like planes, cylinders and spheres. Primitive shapes are fitted onto the point cloud and the points that comply with the mathematical representation of the primitive shape are labelled as one segment. Widely employed algorithms for model fitting are Hough Transform (HT), Random Sample Consensus (RANSAC) and fast point feature histograms (FPFH). Note that HT and FPFH are used to generate features that are utilised as an input for the model fitting methods such as RANSAC~(see e.g.~\cite{li20233D}). Model fitting methods are fast and robust with outliers. However, they fall short when dealing with complex shapes or fully automated implementations. Moreover, they have problems when dealing with different scales of input point clouds.
+References that utilise these techniques in the context of railways are 
+\cite{arastounia2016application,ariyachandra2020digital,benhmida2011from,beger2011data,oudeelberink2013rail,pastucha2016catenary}. 
+A comparison of these methods is presented in~\cite{cserep2022effective}.
+
+\subsubsection{Graph-based methods}
+Graph-based methods view point clouds as graphs. In the simplest model, the vertices in the graph correspond to points in the data and the edges represent certain pairs of neighbouring points~\cite{dgcnn19}. An alternative approach is to first aggregate points into coherent patches, these patches are then considered as the vertices of the graph~\cite{Landrieu18}. Other techniques first voxelise the cloud with for example an octree or supervoxel method and construct a graph out of the voxelised point cloud. Graph-based methods are able to segment complex scenes in point cloud data with noise or uneven density with good results for example by finding the minimum-cut of the graph. However, these methods usually can not run in real-time and some of them may need an offline training step. Although the technique is applied in other contexts it is not applied in the context of railway environments. 
+
+\subsubsection{Hybrid methods}
+Multiple different methods are combined to exploit the best parts of the methods. Most of the reviewed papers fall under this category. Examples include
+\cite{arastounia2016application,ariyachandra2020detection,ariyachandra2020digital,chbeir2015detection,Karunathilake20}.
+\citeauthor{zhang2016automatic} has used several algorithms to extract power lines. They used the spatial structure of the power line for initial segmentation followed by a region-growing method. They applied PCA on the results of the region-growing algorithm and as a final step, they used least square fitting algorithm to model power lines~\cite{zhang2016automatic}. 
+\citeauthor{zou2019efficient} has used a combination of \textit{k}-mean clustering and region-growing algorithm to extract railway tracks from point cloud data. Their focus was on extracting railway tracks with complex topology like bends and turnouts~\cite{zou2019efficient}.
+
+\subsubsection{Summary of structure-based methods}
+\par All structure-based methods have their strong and weak points. 
+In Table~\ref{tab:stoa:structure-based-compare}, we have tabulated the advantages and challenges associated with each of these methods. We have also included the use of these methods in the context of the railway environment based on our literature search. 
+
+\begin{table}[!ht]
+    \centering
+    \begin{tabular}{%
+	  >{\raggedright\arraybackslash}p{1.58cm}%
+	  >{\raggedright\arraybackslash}p{3.58cm}%
+	  >{\raggedright\arraybackslash}p{3.58cm}%
+	  >{\raggedright\arraybackslash}p{1.58cm}}\toprule
+    \textbf{Method}       & \textbf{Advantages}          & \textbf{Challenges} & \textbf{References} \\\midrule      
+     Edge-based & 
+     \textbullet\,Effective in detecting sharp features and boundaries
+     \textbullet\,Useful for feature extraction and edge detection
+    & 
+    \textbullet\,Sensitive to noise and outliers
+    \textbullet\,Limited in handling non-sharp transitions
+    & \cite{ariyachandra2020detection}\\ \addlinespace
+    
+    Region growing & 
+    \textbullet\,Generates coherent and connected regions
+    \textbullet\,Robust to noise and capable of handling irregular shapes
+    & 
+    \textbullet\,Sensitivity to seed point selection
+    \textbullet\,May struggle with complex structures
+    & \cite{arastounia2017enhanced,chbeir2015detection,zhang2016automatic,zou2019efficient} \\ \addlinespace
+    
+    Model fitting & 
+    \textbullet\,Provides accurate geometric representations
+    \textbullet\,Useful for shape recognition and surface reconstruction
+    & 
+    \textbullet\,Prone to model selection bias
+    \textbullet\,Computational complexity for complex models
+    & \cite{arastounia2016application,ariyachandra2020digital,benhmida2011from} \\ \addlinespace
+     
+    Graph-based & 
+    \textbullet\,Captures geometric relationships effectively
+    \textbullet\,Suitable for segmentation, classification, and features
+    & 
+    \textbullet\,Complexity in designing and training GCNs
+    \textbullet\,Requires graph construction and processing overhead
+    &--\\ \addlinespace
+    
+    Hybrid & 
+    \textbullet\,Combine strengths of multiple methods to leverage complementary information
+    & 
+    \textbullet\,Memory and computational overhead could be higher
+    \textbullet\,Integration and hyperparameter tuning could be a challenge
+    & \cite{arastounia2016application,ariyachandra2020detection,ariyachandra2020digital,chbeir2015detection,Karunathilake20,zhang2016automatic,zou2019efficient}\\\bottomrule
+    \end{tabular}
+    \caption{Comparison of structure-based methods for point clouds.\label{tab:stoa:structure-based-compare}}
+\end{table}
+
+
+\subsection{Machine learning-based techniques}
+Machine learning algorithms owe their success to their ability to learn from data. The popularity and widespread adoption of these algorithms can be largely attributed to the vast availability of data. Unlike structural methods, machine learning approaches are inherently adaptive, autonomously discovering patterns in the data. The performance of machine learning methods heavily relies on the quantity and quality of the training data. 
+
+Various machine learning techniques have been developed specifically tailored to the unique structure of point clouds. As mentioned before, working with point cloud data presents its challenges, and the degree of success achieved by these algorithms is often limited. Many of these algorithms struggle to generalise well to different domains. Unlike computer vision problems, where large pre-trained models are readily available for transfer learning, point cloud tasks lack such widespread pre-trained resources. Besides its limitation, the use of machine learning-based techniques is trending, which will become apparent in the following sections. The machine learning-based techniques can be broadly categorised as traditional machine learning-based techniques and deep learning techniques. 
+%%%%%%%%%%%%%%%%%%%
+\subsubsection{Traditional machine learning}
+Traditional machine learning methods are employed as an evolution towards methods that learn from the data and have better generalisability. The main difference with deep learning methods is that deep learning methods learn the features themselves. This is generally faster and more efficient since the model can derive more complex features and can distinguish the most informative features. 
+The literature on traditional machine learning in the context of the railway environment is currently limited. 
+
+\citeauthor{sturari2017robotic} have presented a traditional machine learning approach. The primary focus was on data collection methodology, and to provide proof of concept for applicability of machine learning to the collected dataset. They have compared four traditional machine learning methods, namely decision tree, support vector machine, \textit{k}-nearest neighbour and random forest with a convolution neural network. Notice that the learning task differed since the authors were concerned with the classification problem instead of segmentation or object detection~\cite{sturari2017robotic}. 
+
+The approach used by \citeauthor{uggla2021towards} is interesting since they combined synthetic and real-world data to create synthetic railway scenes. They compared the performance of the deep learning-based approach on real scenes and the scenes synthetically generated from a point cloud. They concluded that the synthetic data could be helpful in generalising performance since more data can be generated easily instead of going through a lengthy data collection process~\cite{uggla2021towards}. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Deep learning based methods}
+The problem of point cloud segmentation and classification looks similar to the ones in computer vision. However, the segmentation and classification are much more challenging for point clouds due to the absence of the grid structure. In computer vision, the images are represented using a structured grid of pixels that allows the application of a convolution neural network (CNN) to extract features. This structure is not present in point clouds. Thus, CNN cannot be directly applied. 
+
+The point clouds are irregular and sparse since the density and distribution of points can vary significantly between different scenes and objects. 
+Deep learning on point clouds requires a distinct approach, and it is currently attracting increasing interest from researchers, particularly in the context of self-driving cars~\cite{li2020deep}. For an empirical comparison of various deep learning approaches, the interested reader is referred to~\cite{guo2020deep}. It is worth mentioning that~\citeauthor{guo2020deep} conducted an empirical comparison of existing deep learning-based approaches for 3D point clouds using various benchmark datasets. However, it is important to note that none of these benchmark datasets specifically include the railway environment. 
+
+The deep learning-based methods can be broadly classified into three categories based on how they handle the point clouds. The categories, indirect methods, direct methods and hybrid methods are addressed in the subsequent sections in context of the railway environment. 
+
+\paragraph{Indirect methods}
+Indirect methods rely on the volumetric representation of point clouds before applying deep learning techniques. Due to this volumetric representation, these methods are also called volumetric or grid-based methods. The most often used volumetric representations are voxel clouds, octree, and projections. The main idea behind the volumetric representation is to introduce a structure similar to images to implement the neural network architecture similar to computer vision. Furthermore, the volumetric representation facilitates the use of 3D convolutions and learning global context. These methods are also limited since creating volumetric representation introduces an extra computational overhead. In the case of voxelisation, the performance depends on voxel size since large voxel size may lead to loss of fine-grained information. 
+\par Indirect methods are often used in conjunction with the convolutional neural network. The fundamental difference among these methods is the underlying volumetric representation. Example includes octrees (OctNet~\cite{riegler2017octnet}, SPH3D-GCN~\cite{lei2020spherical}, O-CNN~\cite{wang2017cnn}), voxel clouds~\cite{xu2021voxel} and \textit{kd}-trees (Kd-network \cite{klokov2017escape}).
+\par In the context of railway infrastructure, only a few papers using th\-ree-di\-men\-sio\-nal CNNs were found during our literature search. 
+\citeauthor{lin2020lidar} has used CNN to identify the context of each single frame point cloud~\cite{lin2020lidar}. On the other hand, \citeauthor{corongiu2020classification} have used CNN with modified Fisher vectors for object classification and extraction of geometrical features with support vector machines~\cite{corongiu2020classification}. 
+\citeauthor{yu2022real-time} has used voxelised data as input for the deep learning algorithm. Their architecture is based on 3D CNN with a shared MLP and max pooling~\cite{yu2022real-time}. 
+
+Another way to create a volumetric representation is to use projections. The projections convert the point clouds into 2D images, thus enabling 2D convolution. In the context of railway infrastructure, \citeauthor{manier2022railway} has used a projective descriptor together with neighbourhood selection for point cloud classification. They focused on computational speed gains though convergence is not guaranteed for challenging datasets~\cite{manier2022railway}. 	
+   
+\paragraph{Direct methods}
+Another approach to handle point cloud data is to use raw point clouds directly. Since these methods directly utilise point clouds the com\-pu\-tat\-ion\-al- and memory costs for intermediate representation, computation, and storage are saved. Also, the direct use of point clouds facilitates non-uniform density and spatial distribution. Moreover, these methods can capture fine-grained point-level information, which is not the case for indirect methods. 
+These methods have certain limitations. Due to the large size of point clouds, these approaches are more computationally involved. Another limitation is the lack of context information since the neural network works directly with the raw point clouds. However, they handle irregularity better. 
+
+PointNet is one of the pioneering methods for directly processing point clouds~\cite{qi2017pointnet} (see also~\cite{guo2020deep} for an empirical comparison). The method has a shortcoming since it does not consider the local relationships within the point cloud. It uses a shared multi-layer perceptron (MLP) and a symmetric function to aggregate information from individual points, resulting in a global feature vector representing the entire point cloud. However, creating this feature vector is solely based on individual points resulting in a loss of contextual or global information. \pnpp{} is an evolved version of PointNet since it also considers the hierarchical relationship among different points reducing the computational requirement and increasing its accuracy.
+
+\pnpp{} is based on shared MLP and max pooling to introduce the concept of local neighbourhood thus capturing both local and global information. It is widely adopted in the context of railway scene classification/segmentation, examples include~\cite{grandio2022point} that have used it together with random subsampling while \citeauthor{dibari2021semantic} have used it in conjunction with transfer learning for semantic segmentation~\cite{dibari2021semantic}. 
+ 
+\paragraph{Hybrid methods}
+Hybrid methods combine direct and indirect approaches, incorporating raw point cloud data and some intermediate representation. These methods often leverage the benefits of both paradigms to achieve improved performance and efficiency. The most often used terms in this respect are point fusion and projection-based methods. The projection-based methods are also classified as an indirect method depending on whether the projection is used to introduce structure or in conjunction with raw point clouds. Hybrid methods need to effectively combine information from direct and indirect representations, requiring careful design to ensure the fusion process does not introduce artifacts or redundancies. Some hybrid methods may require storing both raw point clouds and intermediate representations, leading to higher memory usage.
+\citeauthor{liu2021an} have designed a lightweight neural network with an attention mechanism. The attention mechanism was designed to concentrate on important features ignoring the unimportant ones mimicking human cognition~\cite{liu2021an}. 
+The approach adopted by~\citeauthor{chen2020deep} can be considered as a hybrid approach. They aimed to consider the point cloud data as sequential data mimicking the scan line view of railway infrastructure. They have used a point partitioning algorithm to determine the region of interest for extracting features. The points in the region of interest are then used to create a neural network-based architecture. The author designed a multi-layer neural network architecture with PointNet as one of the layers. To capture sequential information, they used a form of recurrent neural network~\cite{chen2020deep}.
+
+\paragraph{Summary of methods}
+The three classes have their own advantages and disadvantages and their use is tied to the context. In Table~\ref{tab:stoa:deep_learning_summary} we have summarised these methods with respect to their advantages and challenges. We have also included references to the use of these methods in the context of railway environment. 
+
+\begin{table}[!ht]
+    \centering
+    \begin{tabular}{%
+	>{\raggedright\arraybackslash}p{1.58cm}
+	>{\raggedright\arraybackslash}p{3.58cm}
+	>{\raggedright\arraybackslash}p{3.58cm}
+	>{\raggedright\arraybackslash}p{1.58cm}}\toprule
+         \textbf{Method} & \textbf{Advantages} & \textbf{Challenges} & \textbf{References} \\\midrule
+	Indirect & 
+	 \textbullet\,Regular grid processing 
+	\textbullet\,Efficient convolution on regular grids
+	& 
+	\textbullet\,Volumetric representation overhead
+	\textbullet\,Spatial resolution limitation
+	& \cite{corongiu2020classification,lin2020lidar,manier2022railway,yu2022real-time} \\ \addlinespace
+	
+	Direct & 
+	\textbullet\,Efficient data representation 
+	\textbullet\,Flexibility in handling varying data characteristics such as density
+	& 
+	\textbullet\,Irregular data representation
+	\textbullet\,High computational cost 
+	& 
+	\cite{chen2020deep,dibari2021semantic,grandio2022point} \\ \addlinespace
+	
+	Hybrid & 
+	\textbullet\,Global context
+	\textbullet\,Improved performance 
+	\textbullet\,Flexibility in balancing efficiency and accuracy
+	& 
+	\textbullet\,Fusion complexity 
+	\textbullet\,Increase memory consumption
+	\textbullet\,Discretisation artefacts
+	& \cite{liu2021an}$^\dag$ \\\bottomrule
+    \end{tabular}
+    \raggedright $^\dag$No exact reference found in the context of railway infrastructure modelling.
+    \caption{Summary of direct, indirect, and hybrid methods and reference to their use in the context of railway environment.}
+    \label{tab:stoa:deep_learning_summary}
+\end{table}
+
+\paragraph{Fusion with images and deep learning}
+Point clouds are used mostly in the setting when the collection of image data is not always feasible. In some settings image data is also available. Thus it is intuitive to apply computer vision techniques to this dataset. In the scenario when both image and point cloud data are available, one can fuse them together to reap benefits from the structure of both data. 
+
+A notable work in this direction is presented by~\cite{wang2022farnet}. They combined image data and point cloud data to develop an attention mechanism-based algorithm where the transformation is performed by spherical projection. 
+Similarly, \citeauthor{wolf2021asset} have converted point clouds into images~\cite{wolf2021asset}. They used the well-known YOLO~\cite{yolov3} framework which can be used for image segmentation and classification.
+ 
+\paragraph{Fusion with other data and deep learning}
+Generally, the data collection is not limited to only one sensor instead multiple sensors are used simultaneously to collect various types of data. These data may include images, GPS data, inertial measurement unit, and mapping information. Fusing these datasets into a working methodology could help improve the performance of segmentation tasks. 
+\citeauthor{mathani2022enhancing} have used GNSS data, IMU data and point clouds to develop a semantic segmentation algorithm for railway infrastructure~\cite{mathani2022enhancing}. For the point clouds they have used KP-FCNN~\cite{thomas2019KPConv} which is based on point convolution that does not require any intermediate representation. 
+
+\subsection{Other techniques}
+\subsubsection{Semantic and ontology based methods}
+These methods incorporate semantic and ontological information of point cloud data to enhance the understanding and classification of 3D point cloud data. These methods aim to assign semantic labels to individual points or segments of the point cloud, indicating the object category or class they belong to. 
+\citeauthor{karmacharya2015knowledge} have used semantics for object annotation. They combined numerical techniques (structure-based methods (see Section \ref{subsec:stoa:structure based methods})) with expert domain knowledge to develop inference rules. The rules are used to annotate objects of interest from the point clouds~\cite{karmacharya2015knowledge}.   
+On the other hand, \cite{truong2013automatic} have used a three-stage approach to use semantic information for object detection and classification. 
+
+\subsubsection{Software-based approach}
+Detection of rails using MLS, building detection using polygons. The work is based on an existing commercial software tool, TerraScan \cite{kwoczynska2016elaboration}.
+
+\subsection{Commercial software}\label{subsec:stoa:commsoft}
+There has been an uptake of point cloud based information extraction for the railway domain by commercial software vendors. This is a good indicator of the domain becoming more mature. A small, and by no means complete, desk study has been conducted to evaluate the current state and possibilities provided by these commercial software vendors. A total of six software vendors have been compared, and a summary is provided in Table~\ref{tbl:stoa:software}. 
+
+\begin{landscape}
+\begin{table}[!ht]
+    \centering
+    \begin{tabular}{%
+	>{\raggedright\arraybackslash}p{3cm}%
+	ll%
+	>{\raggedright\arraybackslash}p{3cm}%
+	p{2cm}ll}\toprule
+         \textbf{Product} & \textbf{Domicile} & \textbf{Ballast} & \textbf{Track} & \textbf{Wires} & \textbf{Clearance}  & \textbf{Objects}\\\midrule
+         Atlas computers - SCC & Ireland & 
+         DTM &
+         curvature, vert. grad., gauge, cant, slew, twist  &
+         height, stagger & N & N \\
+         \addlinespace
+         
+         Leica~Geosystems Rail:Factory and ATtrack & Switzerland &
+         volume and DTM &
+         curvature, vert. grad., gauge, cant &
+         extraction only & Y & Y \\
+         \addlinespace
+         
+         TheCrossProduct & France &
+         N &
+         curvature, vert. grad., gauge, cant, twist, warp  &
+         height, stagger & Y & Y\\
+         \addlinespace
+         
+         TopoDOT & United States &
+         DTM &
+         gauge & 
+         extraction only & N & Y\\
+         \addlinespace
+         
+         Terrasolid & Finland &
+         missing ballast detection &
+         curvature &
+         extraction only & Y & N\\
+         \addlinespace
+         
+         SITECO~Informatica {Rail-SIT} & Italy &
+         N &
+         curvature &
+         extraction only & Y & N\\         
+     \bottomrule
+    \end{tabular}
+
+    \caption{A comparison of features offered by commercial software vendors}
+    \label{tbl:stoa:software}
+\end{table}
+\end{landscape}
+
+Half of the products provide a digital terrain model (DTM) of the ballast. Terrasolid states that is capable of detecting missing ballast, though it remains unclear what exactly is meant with this. Another oddity is claim of Leica about measuring ballast volume. This is not possible based on point cloud data alone. The majority of the products are only capable of extracting the wires from the point cloud. Only two products provide detailed information about the wires such as height and stagger. Also, most product provide clearance measurement options.
+
+Products from Leica and TopoDOT provide (semi)-automated object detection algorithms to detect objects such as platforms, poles, and signals. A fully automatic segmentation of the scene is provided by TheCrossProduct and is based on a deep learning approach.
+Most of the commercial software product also support tunnel deformation measurements. 
+Another unique feature advertised by the Terrasolid product is the risk evaluation of trees adjacent to the track. It evaluates the risk of trees falling on the track or within the clearance space.

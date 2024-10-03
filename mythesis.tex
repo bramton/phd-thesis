@@ -1,0 +1,93 @@
+\documentclass[twoside,openright]{memoir}
+% Make sure to install the cm-super package to have crisp vector fonts when using the T1 font encoding.
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+\usepackage[style=numeric-comp,giveninits=true,date=year,eventdate=comp,maxcitenames=2,refsection=chapter,url=false,datamodel=license-lit]{biblatex}
+\usepackage{pdflscape}
+\usepackage{subcaption} % For subfigures
+\usepackage{colortbl}
+\usepackage{xurl}
+%\usepackage{hyperref} % Comment out for print version
+%\hypersetup{
+%    colorlinks=true,
+%    linkcolor={red!50!black},
+%    citecolor={blue!50!black},
+%    urlcolor={blue!80!black}
+%}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{array}
+
+\usepackage{pgfplots}
+ \pgfplotsset{compat=1.18}
+\usepackage{tikz}
+\usetikzlibrary {arrows.meta}
+\usetikzlibrary {positioning} 
+\usetikzlibrary{calc}
+
+% Set page size and trims (aka bleed)
+\setstocksize{246mm}{176mm}
+\settrimmedsize{240mm}{170mm}{*}
+\settrims{3mm}{3mm}
+
+\setlrmarginsandblock{25mm}{20mm}{*} 
+\setulmarginsandblock{25mm}{25mm}{*}
+
+\setheadfoot{10mm}{10mm} % headheight,footskip
+\setheaderspaces{*}{10mm}{*}
+\checkandfixthelayout
+
+% Saxion colours
+\definecolor{sax-green}{cmyk}{1, 0, 0.7, 0}
+\definecolor{sax-lgrey}{cmyk}{0, 0, 0.05, 0.3}
+\definecolor{sax-lblue}{cmyk}{0.5, 0, 0.1, 0}
+\definecolor{sax-pink}{cmyk}{0, 1, 0.5, 0}    % Call to action colour
+\definecolor{sax-yellow}{cmyk}{0, 0.1, 1, 0} % Call to action colour
+\definecolor{shadecolor}{cmyk}{0, 0, 0, 0.03} % For the shaded/snugshade environment
+%\definecolor{sax-green}{RGB}{0, 156, 130}
+
+% Custom styling of the document
+\input{mystyling}
+
+% Bibliography files
+\addbibresource{my_pubs.bib}
+\addbibresource{references.bib}
+
+\title{Point taken}
+\newcommand{\thesubtitle}{Translating the physical rail domain to cyber space using point clouds from mobile laser scanning}
+\author{Bram Ton}
+\date{\today}
+
+\newcommand{\pnpp}{PointNet\texttt{++}}
+
+\begin{document}
+
+%\include{MatterFront/front_cover}
+\include{MatterFront/title_pages}
+
+\frontmatter
+\include{MatterFront/acknowledgements}
+\include{MatterFront/summary_en}
+\include{MatterFront/summary_nl}
+\include{MatterFront/acronyms}
+\cleardoublepage
+\tableofcontents
+
+\mainmatter
+\pagestyle{mainmatterstyle}
+\include{Chapters/introduction}
+\include{Chapters/stoa} % State of the art
+\include{Chapters/objdet} % Object detection
+\include{Chapters/semseg} % Semantic segmentation
+\include{Chapters/immvis} % Immersive visualisation
+\include{Chapters/conclusion}
+
+\backmatter
+\input{MatterBack/list_of_publications}
+\input{MatterBack/about_author}
+\cleardoublepage
+%\input{MatterBack/back_cover}
+
+\end{document}

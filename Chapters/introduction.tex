@@ -1,0 +1,126 @@
+\chapter{Introduction}
+\epigraph{Wonder en is gheen wonder.}{Simon Stevin (1548--1620)\\\textit{Dutch scientist and engineer}}
+
+\section{Introduction}
+There are many areas which require accurate 3D digital representations of the environment, such as asset management, digital twins, model based structural health monitoring, 3D city modelling, building information modelling, transportation infrastructure mapping, and scene understanding.
+
+This digitisation of the physical world is an ongoing trend. To enable this, laser scanning is a common technique to capture the geometric surface structure of a scene in the form of a point cloud, as it produces an immediate representation with high accuracy. An additional benefit of laser scanning is its resilience against illumination conditions, this in contrast with camera based solutions. At present, point cloud data is being generated and stored at an unprecedented rate. This has several causes, such as cost decrease of scanning equipment, cost decrease for storing and processing data, increased demand for accurate scene understanding, and adoption of laser scanning equipment by the automotive and robotics industry.
+
+\begin{snugshade}
+\subsection*{What is a point cloud?}
+Laser scanning is used to capture the geometric surface structure of objects as a set of unstructured points in 3D space, colloquially referred to as a \emph{point cloud}. At the bare minimum, each point will have an \(x\),\(y\) and \(z\) coordinate, often in some project-dependent geodetic system.
+
+Point clouds are captured using Light Detection and Ranging (LiDAR) technology. This is done through laser scanning, which operates by emitting a usually non-visible laser light pulse and calculating its time-of-flight. This time is directly proportional to the distance of the object. This distance, combined with the known angles of direction of the laser are used to calculate the 3D position of the reflection occurrence relative to the sensor. Often, laser scanning sensors use a rotating mirror to successively capture multiple datum points in one rotation. High-end laser scanners usually employ two of these scanners mounted at an angle to avoid shadows in the captured scene. Often the terms LiDAR and laser scanning are used interchangeable. Three main configurations of laser scanning can be distinguished:
+\begin{itemize}
+\item \emph{Terrestrial Laser Scanner (TLS):} The laser scanner is usually fixed on a tripod.
+\item \emph{Mobile Laser Scanner (MLS):} The laser scanner is mounted on a mobile carrier platform such as a car, boat or train.
+\item \emph{Airborne or Aerial Laser Scanner (ALS):} The laser scanner is attached to an airborne carrier platform such as an unmanned aerial vehicle (UAV), helicopter or aeroplane.
+\end{itemize}
+
+LiDAR is reputed for precise mapping, extensive range capabilities, its ability to see through vegetation, and compatibility with other tech systems. Its applications span sectors like agriculture, environmental monitoring, archaeology, and forestry~\cite{di2021mobile}.
+
+Formally, a \emph{point cloud} $\mathcal{P}$ can be defined as a finite set of points with cardinality $n$ in $\mathbb{R}^3$. Associated with each individual point there is an \emph{optional} feature vector $\mathcal{F}^D$. This $D$ dimensional feature vector can contain auxiliary information such as reflection intensity, timestamps, classifications, or colour information per point.
+
+Point cloud data are a challenging data modality to work with for several reasons; point clouds are irregular and unordered~\cite{bello2020deep}, data can be missing due to occlusions, scans can be misalignment, and scanning reflective surfaces~\parencite{WangY16,Berger17} can cause outliers.
+%Furthermore, labelling point cloud data is a cumbersome process as it needs to be done in 3D.
+\end{snugshade}
+
+An upcoming domain which is also looking into digitisation of its environment, based on point cloud data, is the rail infrastructure domain. There is an active interest to digitise the rail infrastructure, because it is expected that the coming years rail transport will be an important key factor to combat climate change. Compared to other means of transport, such as air or road transportation, rail transport is viewed as being more environment-friendly~\cite{eu_railway_2020_Fostering}. To maximise the benefits of this greener and sustainable alternative, initiatives such as Shift2Rail and the European Rail Traffic Management System (ERTMS) have been initiated by the EU~\cite{shift2rail,eu_railway_2020_Fostering}. The former aims to digitise the management of railway infrastructure to increase its capacity and lessen its greenhouse gas emissions. The ERTMS digitisation efforts aim for safer, more competitive, and more integrated railway infrastructure~\cites[23]{eu_railway_2020_Fostering}[]{ruete_2020_ERTMS}. One of the objectives of ERTMS is to further improve the predictive maintenance in railway infrastructure through improved early fault detection~\cite{eu_railway_2020_Fostering}. With the envisioned increase of passenger and freight rail traffic in the near future, there will be an increased burden on the railway infrastructure. To ensure continued reliability, availability, maintainability and safety of the railway network in an efficient way, it is vital to have an accurate and up-to-date digital representation of the railway environment. Often such a digital representation is also referred to as an `as-is' model or representation because it reflects the current state. These as-is representations can be used for various tasks, such as planning work, monitoring the infrastructural health, automated inventory assessment, and eventually predictive maintenance. 
+
+Automated creation of these as-is models is challenging because railway environments pose a complex scene structure and span several thousands of kilometres. Scenes contain discrete objects, such as signals, catenary arches, and relay cabinets on the one hand. On the other hand there are continuous objects, such as overhead catenary wires and rail tracks. Furthermore, adding to the complexity, is the fact that the number of distinct objects to digitise around the track is large. Also the inter-, and intra-representational diversity of these objects is large. Especially for countries with a dense rail network and a long history of rail transportation such as the Netherlands. These factors make the digitisation of the rail environment such a challenging task.
+
+A research domain which has already booked significant progress into detecting objects from point cloud data is the autonomous vehicle domain. Autonomous vehicles rely solely on sensor data to make decisions. A key sensor is the laser scanner to detect other road users such as, other vehicles, cyclists, and pedestrians~\cite{Kuutti18}. Part of this research will therefore evaluate the effectiveness of domain adaptation of these models to the rail infrastructure domain.
+
+The detected objects can be further dissected at point level into meaningful information. To do so, this research will also explore the recent advancements in the area of semantic segmentation of point cloud data. These recent models, such as the \pnpp{} model~\cite{Qi.17.2}, directly ingest point cloud data and assign a semantic label to each individual point.
+
+Furthermore, this thesis will show a glimpse of what is possible with these digitised rail environments in an immersive visualisation context. Immersive visualisation benefits from the fact that immersive technologies, such as HMD technology, provide a unique \emph{medium} with great expressive, interactive and representative power~\cite{Rubio17}. With the aid of immersive visualisation, the user can be fully immersed within the 3D data providing an intuitive experience. Within the immersive visualisation, the user can manipulate the 3D scene easily by scaling, rotating and translating to get the best vantage point. Interaction can be done using natural hand gestures or voice commands. Immersive visualisation can aid with the interpretability of data involved with the aforementioned complex tasks such as planning work, structural health monitoring, inventory assessment and predictive maintenance.
+
+
+The remainder of this chapter is organised as follows: first, the research questions are presented which underlay the process of digitising the rail environment based on point cloud data. Thereafter, an outline of the remainder of this thesis is given together with a graphical representation of the relations between the chapters and their topics.
+
+\section{Research questions}
+This research is embedded within the PrimaVera project~\parencite{ton.20} which aims to realise an efficient framework that supports optimal maintenance and asset management in a complex arena. Predictive maintenance (PdM) is a key factor to achieve these goals. But, before any of the benefits of predictive maintenance can be reaped for the rail domain, a translation of the physical world to cyber space is required. This process requires capturing the physical world with suitable sensor data and processing this data into information. The main research question of this thesis is how this translation can be done effectively using point cloud data. The overarching main research question of this thesis is formally formulated below:
+\begin{quote}
+    \textbf{MRQ} What is needed to guarantee that translations at large scale from the physical rail environment into cyber space using point cloud data is accurate enough for tasks such as, planning activities, visualisations, and predictive maintenance ?
+\end{quote}
+
+To answer the main research question, the following three supporting sub-questions are defined:
+\begin{itemize}
+	\item \textbf{RQ1} To what extent are machine learning models aimed at autonomous driving suitable for detecting objects within the railway environment at large scale? (Chapter~\ref{chap:objdet})
+	\item \textbf{RQ2} To what extent can semantic segmentation be used to gain a higher level of detail when capturing the railway scene in cyber space? (Chapter~\ref{chap:semseg})
+	\item \textbf{RQ3} How can immersive visualisation using a head-mounted display add value to visualising point cloud data and information from cyber space? (Chapter~\ref{chap:immvis})
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Contributions}
+A brief summary of the contributions of this thesis and their relation to the research questions and publications is provided in this section.
+
+\paragraph{Contribution 1: Evaluation of autonomous driving object detection models adaptability to railway asset detection.}
+State-of-the art autonomous vehicles are often equipped with laser scanning technology which capture the environment as a point cloud. Obstacle and impact avoidance decisions are based on this point cloud data using innovative deep-learning models. This thesis evaluates these models in the context of detecting railway assets. The results are described in Chapter~\ref{chap:objdet}. This work contributes to answering RQ1 and is currently under review.\\
+
+{\footnotesize
+\noindent\fullcite{ton24objdet}
+}
+
+\paragraph{Contribution 2: Datasets.}
+At the initiation of this work, there where no public point cloud datasets available for the rail domain. Therefore, two custom datasets have been collected and made available to the public. The first contributed dataset is dedicated to the semantic segmentation task and consists of high resolution scans of catenary arches with 14 distinct classes labelled. The second contributed dataset has a hybrid nature, it can be used for both object detection and semantic segmentation tasks. This hybrid nature is enabled by the fact that each point has a label and that semantic groups have a unique identifier. The datasets are described in Chapters~\ref{chap:objdet} and~\ref{chap:semseg}. The datasets themselves are published as:\\
+
+{\footnotesize
+\noindent\fullcite{ton2022labelled}\\[1.5\normalbaselineskip]
+\noindent\fullcite{ton2024dataset}
+}
+
+\paragraph{Contribution 3: Immersive visualisation of railway point cloud scenes.}
+To answer RQ3, this thesis has demonstrated a working prototype to immersively view railway point cloud scenes using a head-mounted display. Users are able to interact with the scene using hand gestures and voice commands in a virtual environment. The process and findings of creating this prototype are detailed in Chapter~\ref{chap:immvis}. This chapter has been published as:\\
+
+{\footnotesize
+\noindent\fullcite{ton2024imvis}
+}
+
+\paragraph{Contribution 4: Gap identification.}
+The railway environment is such a complex and diverse scene, it would be impossible to capture this knowledge in a single machine learning model which is trained in a fully-supervised way. This insight originates from the work done (Chapter~\ref{chap:semseg}) to answer RQ2 and the literature review presented in Chapter~\ref{chap:stoa}. Both works have been published as:\\
+
+{\footnotesize
+\noindent\fullcite{ton2022semantic}\\[1.5\normalbaselineskip]
+\noindent\AtNextCite{\defcounter{minnames}{8}}\fullcite{dekker23}
+}\\
+
+In the grand scheme of things, this research paves the way to predictive maintenance. Predictive maintenance should not be seen as a chain of individual processing steps, but rather as a holistic framework. This idea of a holistic framework was exactly the goal of the PrimaVera project, where this research fell under. A description of the project has been published as:\\
+
+{\footnotesize
+\noindent\AtNextCite{\defcounter{minnames}{20}}\fullcite{ton.20}
+}
+ 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Thesis organisation}
+The thesis is organised as follows, Chapter~\ref{chap:stoa} starts with a survey of the current state-of-the-art methods and approaches towards extracting information from point clouds with a focus on the railway domain. Specifically, this chapter focuses on methods and approaches which are relevant to the creation of an `as-is' model of the railway environment, thus making the transition from the physical world to cyber space.
+
+Based on the findings of this survey, two approaches for digitisation are further explored. Chapters~\ref{chap:objdet} and \ref{chap:semseg} focus on the translation from point cloud data to meaningful information in cyber space. These two chapters evaluate the usability and performance of existing deep learning models to achieve the goal of digitising the rail environment. First, Chapter~\ref{chap:objdet} focuses on large-scale object detection from point cloud data which has been collected using a train mounted laser scanner. Second, Chapter~\ref{chap:semseg} focuses on how these detected objects can be semantically segmented to obtain a higher level of detail. Semantic segmentation assigns a class to each point in the point cloud. These two chapters conclude the process of translating the rail environment to the digital domain.
+
+To close the cycle, and move again from cyber space to the physical world, Chapter~\ref{chap:immvis} presents an immersive visualisation application. This application demonstrates how data from the digital domain can be interactively visualised using a head-mounted display. Finally, a conclusion together with the research contributions, and suggestions for future work are provided in Chapter~\ref{chap:conclusion}.
+
+\begin{figure}[h]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}
+\tikzstyle{mystyle}=[draw,rounded corners,fill=sax-lgrey,fill opacity=0.15,text opacity=1,inner sep=5mm]
+\coordinate (cp) at (0,0);
+\node[mystyle,above=1cm of cp] (cs) {Cyber space};
+\node[mystyle,below=1cm of cp] (pw) {Physical world};
+
+\draw[->,thick,draw=sax-green] (pw.west) to [bend left=70] (cs.west);
+\draw[->,thick,draw=sax-green] (cs.east) to [bend left=70] (pw.east);
+
+\node[mystyle, left=3cm of cp, align=center] {Chapters~\ref{chap:objdet} and \ref{chap:semseg}\\Object detection and\\semantic segmentation};
+\node[mystyle,right=3cm of cp, align=center] {Chapter~\ref{chap:immvis}\\Immersive visualisation };
+
+\end{tikzpicture}
+}% end of resizebox
+\caption{Relations between chapters, the physical world, and cyber space}
+\label{fig:chaps}
+\end{figure}
+
+A graphical representation summarising the relations between the chapters, the physical world, and cyber space is provided in Figure~\ref{fig:chaps}.
+
+\printbibliography[heading=subbibnumbered]

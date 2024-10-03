@@ -1,0 +1,4 @@
+% Used to add a license field to the BibLaTeX data model
+% Source: https://github.com/plk/biblatex/issues/971
+\DeclareDatamodelFields[type=field,datatype=literal]{license}
+\DeclareDatamodelEntryfields{license}

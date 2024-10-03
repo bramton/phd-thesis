@@ -1,0 +1,162 @@
+\section{Meta analysis, challenges, and datasets}\label{sec:stoa:metaanalysis}
+To get a better insight into the gathered data, clusters of articles are formed based on common characteristics like publication year, nature of the dataset or analysis method used. 
+It is apparent from Figure~\ref{fig:stoa:publication_over_year} that the point cloud analysis for railway scenes has been gaining interest in recent years. Another interesting observation is the dip in the number of publications for 2017--2019, with a further increase in 2020/2021. We cannot associate a reason to the dip in the number of publications. However, the increase can be attributed to the popularity of deep learning-based techniques. The rise in the utilization of deep learning techniques for point cloud data analysis can be significantly attributed to the seminal paper by \citeauthor{qi2017pointnet} in 2017, which introduces the PointNet model~\cite{qi2017pointnet}. This work was groundbreaking because it introduced a novel neural network that could process point clouds directly. Note that the data for the year 2022 is incomplete since the query was run in November 2022. 
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            width=0.95\linewidth,
+			height=0.625*0.95\linewidth,
+        	axis x line*=bottom,
+        	axis y line*=left,
+        	ybar,
+        	ymajorgrids=true,
+        	ymin=0,
+        	%enlargelimits=0.05,
+        	bar width=15pt,
+        	x tick label style={
+        		/pgf/number format/1000 sep=,
+        		rotate=45,
+        		anchor=north east},
+            %xlabel=Year,
+        	ylabel=Count
+        ]
+        \addplot[sax-green,fill=sax-green] 
+        	coordinates {
+        	    (2011,2)
+        	    (2012,1)
+        	    (2013,2)
+        	    (2014,2)
+        	    (2015,3)
+        	    (2016,7)
+        	    (2017,3)
+        	    (2018,1)
+        	    (2019,4)
+        	    (2020,11)
+        	    (2021,11)
+        	    (2022,6)
+                };
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Number of publications per year (from papers included in this study)}
+    \label{fig:stoa:publication_over_year}
+\end{figure}
+
+It was evident from the full-text search that most papers can be categorised into three classes based on the objective of the analysis. These steps were pre-processing, modelling, and digital twin. All papers have at least one of these aspects as the main contribution. The distribution of papers according to steps is given in Figure~\ref{fig:stoa:steps}. It is clear from the table that there is no single paper with digital twins as a core focus. In most cases, it is combined with modelling. A combination of pre-processing and modelling is understandably the most used.
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            width=0.95\linewidth,
+			height=0.625*0.95\linewidth,
+        	axis x line*=bottom,
+        	axis y line*=left,
+        	ybar,
+        	ymajorgrids=true,
+        	ymin=0,
+        	%enlargelimits=0.05,
+        	bar width=15pt,
+        	x tick label style={
+        		%/pgf/number format/1000 sep=,
+        		rotate=45,
+        		anchor=north east},
+          xtick={0,1,2,3,4},
+          xticklabels={\textit{(PP,M)},\textit{M},\textit{(PP,M,DT)},\textit{(M,DT)},\textit{PP}},
+            %xlabel=Year,
+        	ylabel=Count
+        ]
+        \addplot[sax-green,fill=sax-green] 
+        	coordinates {
+        	    (0,25)
+        	    (1,14)
+        	    (2,9)
+        	    (3,5)
+        	    (4,3)
+                  };
+        \end{axis}
+    \end{tikzpicture}
+    \caption{An overview of the count of publication describing pre-processing(PP), modelling(M), and digital twin (DT). Note that there is no paper with a sole focus on digital twin.}
+    \label{fig:stoa:steps}
+\end{figure}
+
+
+\subsection{Datasets} 
+One interesting finding of our literature review is the lack of public benchmark datasets consisting of point clouds in the context of railway infrastructure. However, we have recently published a fully labelled dataset consisting of catenary arches~\cite{ton2022semantic}, which is the only openly available dataset to the best of our knowledge. Although a few datasets are mentioned in the literature, they are not openly accessible. 
+The only paper we found concerning data collection in the context of railway infrastructure is \cite{sturari2017robotic} that have reported the most detailed data collection methodology. The authors have presented the approach together with pre-processing. The primary focus was on change detection for the safety and security of railway infrastructure~\cite{sturari2017robotic}. 
+
+The datasets from the included studies are summarised in Table~\ref{tab:stoa:datasets}. The table presents a total of 46 datasets from diverse geographical locations, predominantly from China (11), the European Union (24), and other countries (11), showcasing global research interest. Various data acquisition methods are employed across studies. The majority of the studies used MLS (31), followed by ALS (8), TLS (3) and other methods (4). The datasets vary largely in terms of point density, ranging from densities as low as 50~points/$m^2$ to as high as 2500~points/$m^2$, and cover short stretches (80~m) to several kilometres (120~km). Additionally, while many studies focus on geometric data, only the minority of the datasets incorporate RGB information, highlighting the multifaceted nature of the research.
+
+In the process of collating data for the table, we occasionally derived the density or length values from other information provided within the papers. A notable observation was the complete absence of publicly available datasets. While many papers emphasised the significance of point density, it was interesting to see that a quantitative report on density was often omitted rather it was described qualitatively like low or high density. Interestingly, there was a dataset that focused on lab-generated data of bolts~\cite{lu2021bolt}, but we chose to exclude it from the table for clarity. A particularly remarkable dataset~\cite{zhang2016automatic}, originated from China. Despite being recorded at an impressive speed of 193~km/h, it boasted an exceptionally high point density of 3000~points/$m^2$, underscoring the advancements in data acquisition techniques. For some datasets, we assumed that they were the same because they are from the same research group and have the same characteristics, although it was not stated explicitly in the papers.
+%\begin{table}
+%   \centering
+\setlength{\tabcolsep}{2pt}
+    \begin{ctabular}{p{2cm}p{2.5cm}p{2cm}p{1.5cm}p{1.5cm}p{1.5cm}p{1cm}}
+        \toprule
+        \textbf{Ref.} & \textbf{Country} & \textbf{Scanner type} & \textbf{Speed (km/h)} & \textbf{Density (p/m$^2$)} & \textbf{Length (m)} & \textbf{RGB} \\\midrule
+        \cite{beger2011data}                                    & Austria & ALS & - & 60-90 & 120~000 & Yes \\ % density is p/m^2
+        \cite{arastounia2015automated}                          & Austria & MLS & 125 & - & 550 & Yes \\
+        \cite{oudeelberink2013rail}                             & Austria & MLS & - & 700 & 600 & No \\
+        \cite{geng2020comparison}                               & China & ALS & - & - & - & No \\
+        \cite{chen2020deep}                                     & China & MLS & 3.6 & - & 16~700 & No \\
+        \cite{chen2021railway}                                  & China & MLS & - & - & 150 & No \\
+        \cite{li2018methodology}                                & China & MLS & 120 & - & 3500 & No \\
+        \cite{lin2020lidar,liu2021an,tu2020lidar}               & China & MLS & 3.6 & 1028 & 16.000 & No \\
+        \cite{yu2022real-time}                                  & China & MLS & - & - & - & No \\
+        \cite{zhang2016automatic}                               & China & MLS & 193 & 3000 & 11~690 & No \\
+        \cite{xu2021vehicle-born}                               & China & MLS & 60 & - & 100~000 & No \\
+        \cite{zou2019efficient}                                 & China & MLS & - & 490 & - & No \\
+        \cite{cheng2019automatic}                               & China & TLS & - & - & 885 & No \\
+        \cite{cui2020real-time}                                 & China & - & - & - & 2000 & No \\ % test set, training is only fasteners
+        \cite{roberts2017monitoring}                            & England & MLS & - & - & 16~100 & No \\
+        \cite{soilan20213D}                                     & Europe & - & - & - & 90~000 & No \\
+        \cite{zhu2014the}                                       & Finland & ALS & - & 50 & 2000 & No \\ % They used orthophoto with color as additional data source but color is not directly in point cloud
+        \cite{zhu2014the}                                       & Finland & MLS & 35 & 720 & 2000 & No \\
+        \cite{manier2022railway}                                & France & ALS & - & - & 5250 & No \\
+        \cite{mathani2022enhancing}                             & France & MLS & - & - & - & Yes \\
+        \cite{manier2022railway}                                & France & MLS & - & - & 13~000 & No \\
+        \cite{chbeir2015detection}                              & Germany & MLS & & & 50~000 & No \\
+        \cite{karmacharya2015knowledge}                         & Germany & MLS & - & - & - & No \\
+        \cite{ponciano2015detection}                            & Germany & MLS & - & - & 51~000 & No \\
+        \cite{benhmida2011from,hmida2012knowledge-driven,truong2013automatic} & Germany & TLS & - & - & 500 & No\\
+        \cite{wang2022farnet}                                   & Hong Kong & MLS & - & - & 16~000 & No \\
+        \cite{cserep2022effective}                              & Hungary & MLS & 60 & - & 34~000 & Yes \\ % point density could be calculated (782p/m^2)
+        \cite{sahebdivani2020rail}                              & Iran & Aerial \mbox{images} & - & - & 200 & Yes \\
+        \cite{dibari2021semantic}                               & Italy & Stereo vision & - & - & 300 & Yes \\
+        \cite{corongiu2020classification}                       & Italy & ALS & - & - & 1000 & No \\
+        \cite{sturari2017robotic}                               & Italy & MLS & 0.36-3.6 & - & - & Yes \\
+        \cite{Karunathilake20}                                  & Japan & MLS & 20 & 1600 & - & No \\
+        \cite{arastounia2017enhanced,arastounia2016application} & Netherlands & ALS & 75 & - & 80 & No\\ % density per class
+        \cite{ariyachandra2020detection,ariyachandra2020digital}& Netherlands & ALS & - & 293 & 18~000 & No\\ % density is p/m^2
+        \cite{arastounia2017enhanced}                           & Netherlands & TLS & - & - & 630 & No \\% density per class
+        \cite{kwoczynska2016elaboration}                        & Poland & ALS & - & 10-17 & 772 & No \\
+        \cite{kwoczynska2016elaboration}                        & Poland & MLS & - & - & 550 & No \\
+        \cite{pastucha2016catenary}                             & Poland & MLS & - & - & 90~000 & No \\
+        \cite{gazero2019automated}                              & Portugal & MLS & - & - & 550 & No \\
+        \cite{jung2016multi-range}                              & South Korea & MLS & 50-70 & 100-800 & 1000 & No \\
+        \cite{jwa2015kalman}                                    & South Korea & MLS & 60 & 85 & 100 & No \\
+        \cite{grandio2022point,lamas2021automatic,soilan2021fully} & Spain & MLS & 10 & 980 & 90~000 & No \\
+        \cite{gutirrezfernndez2020automatic}                    & Spain & MLS & 4 & 2500 & - & No \\
+        \cite{uggla2021towards}                                 & Sweden & MLS & - & 568 & 2000 & No \\ % length is avg width (33m) times # crossings (60), density is calculated from avg data
+        \cite{marwati2021automatic}                             & Taiwan & MLS & - & - & 14~000 & No \\
+        \cite{yang2014automated}                                & USA & MLS & - & 77 & 2000 & No \\
+        \bottomrule
+    \end{ctabular}
+	\freetabcaption{An overview of the datasets used in the included papers.}\label{tab:stoa:datasets}
+	\setlength{\tabcolsep}{6pt} % Restore
+ %   \caption{An overview of the datasets used in the included papers.}
+ %   \label{tab:stoa:datasets}
+%\end{table}
+
+\subsection{Challenges of point cloud data}\label{sec:stoa:differences_challenges_pc_data}
+Point clouds are irregular, unstructured and unordered, unlike 2D images, and are thus a challenging data type to work with~\cite{bello2020deep}. Following is a list of the most significant challenging characteristics that are inherent to point cloud data. Sensor type, environment, weather conditions, and sensing distance influence the degree to which point clouds suffer from these characteristics~\cite{li2020deep}:
+
+\begin{description}
+    \item[Irregularity] point clouds usually have non-uniform distributed point density. 
+    \item[Unstructured] point clouds are not placed on a regular grid. Each point is scanned independently, and its distance to neighbouring points is not fixed. This also means that voxelisation of point clouds often leads to empty voxels, i.e. data sparsity.
+    \item[Unordered] point clouds are sets of points, the order in which the points are stored does not change the representation. 
+    \item[Size] point clouds often contain millions of points taking up large chunks of memory and thus it is time-consuming to process and analyse them.
+    \item[Measurement artefacts] point clouds can contain noise in the data produced for example by errors of the scanner or moving objects~\cite{nurunnabi2015outlier}.
+    \item[(Partial) Occlusion] point clouds suffer from (partial) occlusion of objects since other objects may block them~\cite{guo2015novel}.
+\end{description}
+
+A challenge for railway scenes is the large variance in object sizes (a top bar can be well over 20~metres long, while an insulator typically is around 30~centimetres~\cite{ton2022semantic}, which is a size ratio of at least 60 times). An additional challenge is the huge class imbalance encountered within the rail environment, for instance certain objects like masts occur very regularly, but relay cabinets occur a lot less often.

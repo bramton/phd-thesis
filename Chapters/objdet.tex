@@ -1,0 +1,10 @@
+\chapter{Object detection}\label{chap:objdet}
+\epigraph{All models are wrong, but some are useful.}{George E. P. Box\\\textit{British statistician}}
+
+This chapter investigates the first phase of the translation from the physical world to cyberspace, by evaluating two object detection models from the autonomous driving research domain.  The PointPillar and the CenterPoint model are evaluated for their suitability to automatically create a digital representation of the rail environment. This evaluation is used to answer RQ1. Based on a custom, open dataset, these two models are evaluated to detect masts, tension rods, signals, and relay cabinets. This dataset is one of the contributions of this thesis. Furthermore, this chapter aided in defining the gap identification contribution. A mean Average Precision (\textit{mAP@0.5}) of 70.6\% is achieved. A unique result of this research is the in-depth analysis of the locational error. This analysis shows that the locational accuracy is not yet sufficient for engineering applications and that largest contribution to this error originates from the random error. Furthermore, this chapter shows that transfer learning is an effective solution to reduce the labelling burden. As an example, when using 25\% of the training data the AP for the tension rod class jumps from 9.5\% (no transfer learning) to 70.8\% (with transfer learning). 
+
+\clearpage
+\input{./Chapters/objdet/objdet.tex}
+
+\clearpage
+\printbibliography[heading=subbibnumbered]
