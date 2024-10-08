@@ -1,4 +1,4 @@
-# PhD dissertation template
+# PhD thesis
 This thesis makes use of the [memoir class](https://ctan.org/pkg/memoir) for typesetting the document. The title pages are typeset according to the guidelines of the University of Twente.
 
 Two sample pages from the thesis are provided below. The entire thesis can be found here: [doi:10.3990/1.9789036561990](https://doi.org/10.3990/1.9789036561990).
